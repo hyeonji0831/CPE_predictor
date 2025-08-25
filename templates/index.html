@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CPE Risk Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  </head>
+  <body>
+    <header>
+      <h1>
+        <span class="desktop-title">CPE (Carbapenemase-producing Enterobacterales) Predictor in ICU</span>
+        <span class="mobile-title">CPE predictor in ICU</span>
+      </h1>
+    </header>
+
+    <!-- 두 칼럼 레이아웃: 왼쪽 폼 / 오른쪽 결과패널 -->
+    <main class="layout">
+      <!-- 왼쪽: 폼 -->
+      <div class="left">
+        <form id="cpe-form">
+          <!-- Part A -->
+          <section>
+            <h2 class="part-title">Part A : Admission History & Healthcare Exposure</h2>
+            <div class="card-container">
+              <!-- Hospital days -->
+              <div class="card">
+                <div class="card-title">Hospital days before ICU admission</div>
+                <input
+                  type="number"
+                  id="hospital-days"
+                  name="hospital-days"
+                  value="1"
+                  min="0"
+                  step="1"
+                  placeholder="Enter the amount"
+                />
+              </div>
+
+              <!-- LTCF admission -->
+              <div class="card">
+                <div class="card-title">
+                  Admission to long-term care facilities <br />
+                  within one year
+                </div>
+                <div class="chip-group">
+                  <input type="radio" id="ltcf_no" name="ltcf" value="0" checked />
+                  <label for="ltcf_no" class="chip">No</label>
+                  <input type="radio" id="ltcf_yes" name="ltcf" value="1" />
+                  <label for="ltcf_yes" class="chip">Yes</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Part B -->
+          <section>
+            <h2 class="part-title">Part B : Medical Conditions & Interventions</h2>
+            <div class="card-container">
+              <div class="card">
+                <div class="card-title">ESRD on renal replacement</div>
+                <div class="chip-group">
+                  <input type="radio" id="esrd_no" name="esrd" value="0" checked />
+                  <label for="esrd_no" class="chip">No</label>
+                  <input type="radio" id="esrd_yes" name="esrd" value="1" />
+                  <label for="esrd_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Steroid use within 3 months</div>
+                <div class="chip-group">
+                  <input type="radio" id="steroid_no" name="steroid" value="0" checked />
+                  <label for="steroid_no" class="chip">No</label>
+                  <input type="radio" id="steroid_yes" name="steroid" value="1" />
+                  <label for="steroid_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">VRE colonization within 6 months</div>
+                <div class="chip-group">
+                  <input type="radio" id="vre_no" name="vre" value="0" checked />
+                  <label for="vre_no" class="chip">No</label>
+                  <input type="radio" id="vre_yes" name="vre" value="1" />
+                  <label for="vre_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Endoscopy within 1 year</div>
+                <div class="chip-group">
+                  <input type="radio" id="endoscopy_no" name="endoscopy" value="0" checked />
+                  <label for="endoscopy_no" class="chip">No</label>
+                  <input type="radio" id="endoscopy_yes" name="endoscopy" value="1" />
+                  <label for="endoscopy_yes" class="chip">Yes</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Part C -->
+          <section>
+            <h2 class="part-title">Part C : Indwelling device</h2>
+            <div class="card-container">
+              <div class="card">
+                <div class="card-title">Central venous catheter</div>
+                <div class="chip-group">
+                  <input type="radio" id="cvc_no" name="cvc" value="0" checked />
+                  <label for="cvc_no" class="chip">No</label>
+                  <input type="radio" id="cvc_yes" name="cvc" value="1" />
+                  <label for="cvc_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Nasogastric tube</div>
+                <div class="chip-group">
+                  <input type="radio" id="ngt_no" name="ngt" value="0" checked />
+                  <label for="ngt_no" class="chip">No</label>
+                  <input type="radio" id="ngt_yes" name="ngt" value="1" />
+                  <label for="ngt_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">PTBD(percutaneous transhepatic biliary drain)</div>
+                <div class="chip-group">
+                  <input type="radio" id="ptbd_no" name="ptbd" value="0" checked />
+                  <label for="ptbd_no" class="chip">No</label>
+                  <input type="radio" id="ptbd_yes" name="ptbd" value="1" />
+                  <label for="ptbd_yes" class="chip">Yes</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Part D -->
+          <section>
+            <h2 class="part-title">Part D : Previous antibiotics within 3 months</h2>
+            <div class="card-container">
+              <div class="card">
+                <div class="card-title">β-lactam/β-lactamase inhibitor</div>
+                <div class="chip-group">
+                  <input type="radio" id="blactam_no" name="blactam" value="0" checked />
+                  <label for="blactam_no" class="chip">No</label>
+                  <input type="radio" id="blactam_yes" name="blactam" value="1" />
+                  <label for="blactam_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Cephalosporin</div>
+                <div class="chip-group">
+                  <input type="radio" id="ceph_no" name="ceph" value="0" checked />
+                  <label for="ceph_no" class="chip">No</label>
+                  <input type="radio" id="ceph_yes" name="ceph" value="1" />
+                  <label for="ceph_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Fluoroquinolone</div>
+                <div class="chip-group">
+                  <input type="radio" id="fq_no" name="fq" value="0" checked />
+                  <label for="fq_no" class="chip">No</label>
+                  <input type="radio" id="fq_yes" name="fq" value="1" />
+                  <label for="fq_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Carbapenem</div>
+                <div class="chip-group">
+                  <input type="radio" id="carb_no" name="carb" value="0" checked />
+                  <label for="carb_no" class="chip">No</label>
+                  <input type="radio" id="carb_yes" name="carb" value="1" />
+                  <label for="carb_yes" class="chip">Yes</label>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">Aminoglycoside</div>
+                <div class="chip-group">
+                  <input type="radio" id="amino_no" name="amino" value="0" checked />
+                  <label for="amino_no" class="chip">No</label>
+                  <input type="radio" id="amino_yes" name="amino" value="1" />
+                  <label for="amino_yes" class="chip">Yes</label>
+                </div>
+              </div>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <!-- 오른쪽: 버튼 + 결과 -->
+      <!-- 오른쪽: 버튼 + 결과 박스 (가운데 정렬) -->
+      <aside id="result" class="right-panel" aria-live="polite">
+        <button id="btn-calc" type="submit" form="cpe-form" class="calc-btn">CALCULATE CPE RISK</button>
+
+        <!-- ✅ 결과 박스: 처음엔 숨김 -->
+        <div id="result-panel" class="result-panel hidden">
+          <div class="result-icon">
+            <img
+              id="icon-ok"
+              src="{{ url_for('static', filename='fig/check.png') }}"
+              alt="OK"
+              width="56"
+              height="56"
+              decoding="async"
+              loading="lazy"
+            />
+            <img
+              id="icon-warn"
+              src="{{ url_for('static', filename='fig/warn.png') }}"
+              alt="Warning"
+              width="56"
+              height="56"
+              decoding="async"
+              loading="lazy"
+            />
+          </div>
+          <br />
+          <h2 id="status">—</h2>
+          <br />
+          <p class="risk"><b>Risk Probability:</b> <span id="prob">—</span>%</p>
+          <!-- ===== ABOUT (오른쪽 패널: 결과 아래) ===== -->
+          <div id="about" class="about-wrap" aria-labelledby="about-calculator about-creator">
+            <!-- About the Calculator -->
+            <section class="about-card" aria-labelledby="about-calculator">
+              <h3 id="about-calculator" class="about-title">
+                <span class="about-dot" aria-hidden="true"></span>
+                About the Calculator
+              </h3>
+
+              <p><strong>Model:</strong> Logistic Regression (threshold = 0.45)</p>
+              <p><strong>Performance</strong> (based on 2022–23 ICU data):</p>
+              <ul class="about-metrics">
+                <li><strong>PR-AUC:</strong> 0.358</li>
+                <li><strong>ROC-AUC:</strong> 0.774</li>
+                <li><strong>Sensitivity:</strong> 72.5%</li>
+                <li><strong>Specificity:</strong> 68.9%</li>
+                <li><strong>PPV:</strong> 19.2%</li>
+                <li><strong>NPV:</strong> 96.1%</li>
+                <li><strong>F1-score:</strong> 0.304</li>
+                <li><strong>Accuracy:</strong> 69.3%</li>
+              </ul>
+            </section>
+
+            <!-- About the Creator -->
+            <section class="about-card" aria-labelledby="about-creator">
+              <h3 id="about-creator" class="about-title">
+                <span class="about-dot" aria-hidden="true"></span>
+                About the Creator
+              </h3>
+              <p>
+                <a
+                  class="about-link"
+                  href="https://github.com/hyeonji0831/CPE_predictor"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  https://github.com/hyeonji0831/CPE_predictor
+                </a>
+              </p>
+            </section>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- ====== FOOTER ====== -->
+    <footer class="footer">
+      <p>
+        &copy; 2025 Department of Infectious Diseases, Hallym University Sacred Heart Hospital. All rights reserved.
+      </p>
+    </footer>
+  </body>
+</html>

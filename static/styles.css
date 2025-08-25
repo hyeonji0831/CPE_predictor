@@ -1,0 +1,533 @@
+/*=========================================================
+0) TOKENS (Design System)
+=========================================================*/
+:root {
+  /* Layout */
+  --right-col-w: 420px; /* 우측 패널 폭 */
+  --right-offset: 78px; /* 우측 컬럼 상단 Y 보정 */
+  --about-width: var(--right-col-w); /* JS가 이 값을 덮어씁니다. 기본값 설정 */
+
+  /* Tile (카드/버튼 공통 규격) */
+  --tile-h: 110px; /* 카드/버튼 높이 */
+  --tile-pad: 20px;
+  --tile-br: 1.25px;
+  --tile-radius-card: 12px;
+  --tile-radius-btn: 18px;
+
+  /* Result Icon (PNG) */
+  --result-icon-size: 56px;
+
+  /* Colors */
+  --bg-page: white;   /* 전체 바탕 연회색 */
+  --text: #111827;
+  --blue-700: #1e40af;
+  --gray-300: #d1d5db;
+  --gray-200: #e5e7eb;
+
+  /* 상태 색상 */
+  --ok-600: #2c6e49;
+  --ok-50: #e7f5ec;      /* OK 패널 배경 */
+  --warn-500: #f59e0b;
+  --warn-700: #b45309;
+  --warn-50: #fff5e5
+
+  /* Controls */
+  --control-h: 44px;
+
+  /* Right: About */
+  --about-offset: 80px; /* 결과패널 아래와의 간격 (여기만 바꿔서 간격 조절) */
+  --about-gap: 16px; /* 두 카드 사이 간격 */
+  --about-title: 21px; /* 제목 크기 */
+
+  --about-height: auto; /* JS가 px로 채워줌(옵션) */
+}
+
+/*=========================================================
+1) BASE
+=========================================================*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--bg-page);
+  color: var(--text);
+}
+
+body {
+  background: var(--bg-page); /* 연회색 배경 */
+}
+
+.card,
+.result-panel,
+.about-card {
+  background: #fff; /* 무조건 흰색 */
+}
+
+header {
+  padding: 20px;
+}
+header h1 {
+  font-size: 34px;
+  line-height: 1.25;
+  font-weight: 700;
+  margin: 0;
+}
+
+.part-title {
+  color: var(--blue-700);
+  font-size: 28px;
+  font-weight: 600;
+  font-style: italic;
+  margin: 28px 20px 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+/*=========================================================
+2) LAYOUT (좌측 폼 + 우측 패널)
+=========================================================*/
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--right-col-w);
+  gap: 24px;
+  align-items: start;
+}
+
+.right-panel {
+  position: sticky;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 18px; /* 우측 패널 내부 컴포넌트 간 공통 간격 */
+  width: var(--right-col-w);
+  max-width: 100%;
+  margin-top: var(--right-offset);
+  padding-inline: 20px; /* 버튼/카드와 동일 폭 기준 */
+}
+
+/* 우측 패널 안의 모든 박스/카드/버튼은 동일한 내부 폭 사용 */
+.right-panel > * {
+  width: 100% !important;
+  box-sizing: border-box;
+  align-self: stretch;
+}
+
+/*=========================================================
+3) CARDS (좌측 폼)
+=========================================================*/
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin: 16px 20px;
+}
+
+.card {
+  min-height: var(--tile-h);
+  padding: var(--tile-pad);
+  background: #fff;
+  border: var(--tile-br) solid var(--gray-200);
+  border-radius: var(--tile-radius-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 테스트용 고정 높이를 쓰고 싶다면 아래를 유지, 아니라면 삭제 가능 */
+.card {
+  height: var(--tile-h) !important;
+  min-height: 0 !important;
+  overflow: hidden;
+}
+
+/* 카드 개수가 홀수일 때 마지막 카드 풀폭 */
+.card-container > .card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.card-title {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.25;
+  margin-bottom: 14px;
+  word-break: keep-all;
+}
+
+.number-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  margin: 0 auto;
+}
+
+/*=========================================================
+4) CHIP RADIO
+=========================================================*/
+.chip-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.chip-group input[type='radio'] {
+  position: absolute;
+  left: -9999px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 32px;
+  border: 1px solid var(--gray-300);
+  border-radius: 10px;
+  font-size: 16px;
+  background: #fff;
+  color: var(--text);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+.chip:hover {
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.12);
+}
+.chip-group input[type='radio']:checked + .chip {
+  background: var(--blue-700);
+  color: #fff;
+  border-color: var(--blue-700);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.2);
+}
+
+/*=========================================================
+5) RIGHT: BUTTON (Figma 톤)
+=========================================================*/
+.calc-btn {
+  height: var(--tile-h);
+  padding: 24 22px; /* 세로는 height로 제어 */
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: var(--tile-br) solid var(--ok-600);
+  border-radius: var(--tile-radius-btn);
+  background: linear-gradient(180deg, #f3fbf6 0%, #eef8f2 100%);
+  color: var(--ok-600);
+  box-shadow: 0 10px 24px rgba(44, 110, 73, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 20px;
+  line-height: 1.1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.06s;
+}
+.calc-btn::before {
+  content: '🔬';
+  font-size: 1.05em;
+  line-height: 1;
+}
+.calc-btn:hover {
+  background: linear-gradient(180deg, #edf8f2 0%, #e7f3ee 100%);
+}
+.calc-btn:active {
+  transform: translateY(1px);
+}
+.calc-btn:focus-visible {
+  outline: 0;
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px rgba(44, 110, 73, 0.45);
+}
+.calc-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+/*=========================================================
+6) RIGHT: RESULT PANEL (+ PNG 아이콘)
+=========================================================*/
+.result-panel {
+  width: 100%;
+  padding: 24px 22px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 8px 16px rgba(16, 24, 40, 0.06);
+  text-align: center;
+  margin-top: var(--result-offset, 0px); /* JS가 계산해서 세팅 가능 */
+  height: var(--result-height, auto); /* JS가 px로 세팅 가능 */
+}
+
+.result-icon {
+  width: var(--result-icon-size);
+  height: var(--result-icon-size);
+  margin: 4px auto 12px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.result-icon img {
+  width: 120%;
+  height: 120%;
+  object-fit: contain;
+  display: none; /* 상태 클래스에서 노출 */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+/* SVG 규칙 무력화 */
+.result-panel .result-icon svg {
+  display: none !important;
+}
+
+.result-panel h2 {
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 700;
+  margin: 6px 0;
+}
+.result-panel .risk {
+  font-size: clamp(20px, 1.6vw, 24px);
+  margin: 2px 0 0;
+  color: #111827;
+}
+
+/* 상태별 스타일 */
+.result-panel.is-ok {
+  border-color: var(--ok-600);
+  box-shadow: 0 1px 2px rgba(44, 110, 73, 0.06), 0 10px 20px rgba(44, 110, 73, 0.1);
+}
+.result-panel.is-ok h2 {
+  color: var(--ok-600);
+}
+.result-panel.is-ok #icon-ok {
+  display: block;
+}
+
+.result-panel.is-warn {
+  border-color: var(--warn-500);
+  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.06), 0 10px 20px rgba(245, 158, 11, 0.1);
+}
+.result-panel.is-warn h2 {
+  color: var(--warn-700);
+}
+.result-panel.is-warn #icon-warn {
+  display: block;
+}
+
+/*=========================================================
+6.5) RIGHT: ABOUT (Calculator / Creator)
+=========================================================*/
+/* 결과 패널 아래 About 래퍼 – 결과패널과의 간격은 --about-offset 로 제어 */
+.about-wrap {
+  width: var(--about-width);
+  display: flex;
+  flex-direction: column;
+  gap: var(--about-gap);
+  margin-top: var(--about-offset);
+  padding: 0;
+  align-items: stretch;
+  text-align: left !important; /* 기본 왼쪽 정렬 */
+}
+
+/* 개별 카드 – 버튼/결과패널과 정확히 같은 내부 폭 */
+.about-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0; /* 패딩 제거 */
+  margin: 0;
+  border: none; /* 테두리 제거 */
+  background: transparent; /* 배경을 투명하게 만듭니다 */
+  box-shadow: none; /* 그림자 제거 */
+  box-sizing: border-box;
+  width: 100%;
+  max-width: unset;
+  text-align: left;
+}
+
+/* 제목 라인 (■ 아이콘 + 텍스트) */
+.about-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 10px;
+  font-size: var(--about-title);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  justify-content: flex-start; /* 왼쪽 정렬 유지 */
+}
+
+.about-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: #111827; /* 검은 점 */
+  display: inline-block;
+}
+
+/* 메트릭 리스트 */
+.about-metrics {
+  margin: 8px 0 0 0;
+  padding-left: 1.2rem;
+  list-style: disc;
+}
+.about-metrics li {
+  margin: 8px 0;
+}
+
+/* 링크 */
+.about-link {
+  color: var(--blue-700);
+  text-decoration: underline;
+  word-break: break-all; /* 긴 URL 줄바꿈 */
+}
+
+/*=========================================================
+7) RESPONSIVE
+=========================================================*/
+.mobile-title {
+  display: none;
+}
+
+/*=========================================================
+7) RESPONSIVE
+=========================================================*/
+/* 모바일에서만 보여줄 제목을 기본적으로 숨깁니다. */
+
+@media (max-width: 430px) {
+  /* 0) 모바일 전용 디자인 토큰 */
+  :root {
+    --tile-h: 90px;
+    --tile-pad: 14px;
+    --about-title: 20px;
+  }
+
+  /* 1) 전체 레이아웃 */
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  /* 2) 제목 (Header & Part A, B...) */
+  header h1 > span:not(.mobile-title) {
+    display: none; /* 긴 제목 숨기기 */
+  }
+
+  .mobile-title {
+    display: inline; /* 짧은 제목 표시 */
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  h2.part-title {
+    font-size: 16px;
+    margin: 16px 10px 8px;
+  }
+
+  body {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  /* 3) 카드 (Card & Card Container) */
+  .card-container {
+    grid-template-columns: 1fr !important; /* 2열 -> 1열로 변경 */
+  }
+
+  .card-title {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  /* 4) 폼 입력 요소 (Input & Chips) */
+  #hospital-days {
+    height: 40px;
+    width: 140px;
+    font-size: 14px;
+  }
+
+  .chip {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  /* 5) 우측 패널 */
+  .right-panel {
+    position: static;
+    width: 100%;
+    margin-top: 12px;
+    align-items: stretch;
+  }
+
+  .result-panel {
+    padding: 18px 16px;
+  }
+
+  .about-wrap {
+    margin-top: 16px;
+    width: auto;
+  }
+  footer p {
+    font-size: 12px; /* 원래보다 줄임 */
+    line-height: 1.4;
+    text-align: center; /* 가운데 정렬 */
+    padding: 10px;
+    word-break: keep-all; /* 단어 단위 줄바꿈 */
+  }
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+}
+
+/*=========================================================
+8) INPUT (개별)
+=========================================================*/
+#hospital-days {
+  height: var(--control-h);
+  line-height: calc(var(--control-h) - 2px);
+  font-size: var(--control-font);
+  padding: 0 8px;
+  width: 180px;
+  display: block;
+  margin-inline: auto;
+  align-self: center;
+}
+#hospital-days:focus {
+  outline: 2px solid var(--blue-700);
+  outline-offset: 2px;
+}
+
+/*=========================================================
+9) FOOTER
+=========================================================*/
+.footer {
+  width: 100%;
+  padding: 0;
+  margin-top: 0;
+  text-align: center;
+  color: #6b7280; /* tailwind의 gray-500 느낌 */
+  font-size: 18px;
+  background-color: transparent;
+  border-top: 1px solid var(--gray-200);
+}
