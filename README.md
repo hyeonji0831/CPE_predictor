@@ -1,49 +1,47 @@
-# Machine learning for early prediction of ICU colonization with carbapenemase-producing Enterobacterales: a SMOTE-enhanced approach
+# Early Prediction of Carbapenemase-Producing Enterobacterales Colonization at ICU Admission Using Machine Learning
 
-This study aims to predict 'CPE or not' by developing machine learning models for the isolation of patients who are suspected of infection.
+## Overview
+- This repository contains code and materials for a prediction model that estimates the risk of CPE colonization at the time of ICU admission using routinely available clinical data. The study was a single-center, retrospective cohort (Jan 2022–Dec 2023, South Korea) reported with reference to TRIPOD-AI guidelines. A web tool is available for point-of-care use. (www.cpepredictor.com)
+- Population: 4,915 ICU admissions; 453 (9.2%) CPE-positive on rectal swab within 48 h
+- Outcome: CPE colonization (binary) at ICU admission
+- Best model: Logistic regression (threshold 0.45) with high sensitivity 0.73 and NPV 0.96; ROC-AUC 0.77, PR-AUC 0.36
+- Use case: Rule-out aid to help prioritize isolation resources before culture results are available
 
-This project presents interpretable machine learning models to predict colonization by carbapenemase-producing Enterobacterales (CPE) at the time of ICU admission. By using structured electronic medical record (EMR) data and applying SMOTE to address class imbalance, we aimed to support early infection control decisions in critical care settings.
+## Datasets
+- Setting: 842-bed tertiary referral hospital (Anyang, South Korea)
+- Period: January 2022 – December 2023
+- Inclusion: First ICU admission per adult patient with rectal surveillance culture within 48 h
+- Split: Chronological 80:20 train:test
+- Candidate predictors: 42 EMR variables available at admission; engineered composite scores for antibiotics, indwelling devices, and comorbidities; no missing data
+  
 
-## 🧠 Overview
-- **Goal**: Predict whether an ICU-admitted patient is colonized with CPE using clinical and demographic data.
-- **Approach**: Logistic regression and other machine learning algorithms trained on a 2022 ICU dataset, validated using 2023 data.
-- **Key Tools**: SMOTE for imbalance correction, SHAP for model interpretability.
+## Machine Learning Models Used
 
-## 📊 Datasets
-- **Training**: 1,992 ICU admissions (2022)  
-  - CPE+: 220 (11%), CPE–: 1,772 (89%)
-- **Validation**: 2,923 ICU admissions (2023)  
-  - CPE+: 233 (8%), CPE–: 2,690 (92%)
-
-## 🤖 Machine Learning Models Used
-
-| Model Name              | Description                         |
-|-------------------------|-------------------------------------|
-| Logistic Regression     | Linear model for binary classification with L2 regularization |
-| Decision Tree           | Tree-based model for interpretable splits |
-| Random Forest           | Ensemble of decision trees using bagging |
-| Extra Trees             | Ensemble method with randomized splits |
-| XGBoost                 | Gradient boosting with regularization (fast and accurate) |
-| LightGBM                | Fast gradient boosting using leaf-wise splits |
-| Gradient Boosting       | Sequential ensemble of weak learners |
-| AdaBoost                | Boosting algorithm combining weak learners iteratively |
-| SVM (RBF)               | Support vector machine with radial basis function kernel |
-| K-Nearest Neighbors     | Distance-based non-parametric classifier |
-
+Ten classifiers were compared (default hyperparameters; stratified 5-fold CV on training set):
+- Logistic Regression
+- Decision Tree
+- Random Forest
+- Extra Trees
+- Gradient Boosting
+- AdaBoost
+- Support Vector Machine (RBF)
+- XGBoost
+- LightGBM
+- Voting Ensemble
 
 
-## 🔍 Key Findings
-- **Best Model**: Logistic Regression with SMOTE
-  - **Sensitivity**: 0.62
-  - **PR-AUC**: 0.22
-  - **ROC-AUC**: 0.71
-- **Top Predictors**: Central venous catheter, nasogastric tube, prior antibiotics, long-term care admission.
+## Final Model Selection & Thresholding
 
-## 📁 Repository Structure
-- `outcome of code_1/`: Generated results including figures, tables, and supplementary material 1.
-- `outcome of code_2/`: Generated results including supplementary material 2.
-- `1. Overall_CPE_prediction_code/`: Jupyter notebook for data preprocessing, model training, evaluation, coefficients of logistic regression, and SHAP interpretation.
-- `2. Supplemental_material_2_Generation/`: Comparing the baseline characteristics of the 2022 training cohort and the 2023 validation
+The project prioritized sensitivity for infection-control utility. Logistic regression offered the most balanced trade-off. On the held-out test set:
+- Threshold 0.50: Sensitivity 0.63, Specificity 0.77, ROC-AUC 0.77, PR-AUC 0.36
+- Threshold 0.45 (selected): Sensitivity 0.73, NPV 0.96 (PPV ~0.19)
+- Threshold 0.40: Sensitivity 0.77
+These figures support use as a rule-out tool; positive predictions warrant clinical review and/or rapid molecular screening rather than automatic isolation.
 
-## ✉️ Contact
-For inquiries, contact Yong Kyun Kim (amoureuxyk@naver.com)
+## Web Application
+- A public demo is available: www.cpepredictor.com.
+- Inputs: 14 admission-time variables
+- Output: Estimated CPE colonization risk with a recommended decision threshold (0.45 in the study)
+
+## Contact
+For inquiries, contact Hyeonji Seo (lollipop0831@gmail.com)
